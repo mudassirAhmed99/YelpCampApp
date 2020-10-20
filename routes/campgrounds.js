@@ -6,19 +6,17 @@ const campgrounds = require('../controllers/campgrounds');
 
 const Campground = require('../models/campground');
 
-router.get('/', catchAsync(campgrounds.index));
-
+router.route('/')
+    .get(catchAsync(campgrounds.index))
+    .post(isLoggedIn, validateCampground, catchAsync(campgrounds.createCampground))
+ 
 router.get('/new', isLoggedIn, campgrounds.renderNewForm)
 
-
-router.post('/', isLoggedIn, validateCampground, catchAsync(campgrounds.createCampground));
-
-router.get('/:id', catchAsync(campgrounds.showCamground));
+router.route('/:id')
+    .get(catchAsync(campgrounds.showCamground))
+    .put(isLoggedIn,  isAuthor, validateCampground, catchAsync(campgrounds.updateCampground))
+    .delete(isLoggedIn, isAuthor, catchAsync(campgrounds.deleteCampground))
 
 router.get('/:id/edit', isLoggedIn, isAuthor, catchAsync(campgrounds.renderEditForm))
-
-router.put('/:id', isLoggedIn,  isAuthor, validateCampground, catchAsync(campgrounds.updateCampground));
-
-router.delete('/:id', isLoggedIn, isAuthor, catchAsync(campgrounds.deleteCampground));
 
 module.exports = router;
